@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section bg-gradient text-white py-5 mb-5">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-rocket me-3"></i>
+            Smart ATS Resume Builder & Analyzer
+        </h1>
+        <p class="lead mb-4">
+            AI-powered resume optimization using Groq's Llama 3.3 70B model for maximum ATS compatibility
+        </p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{{ url_for('builder') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-edit me-2"></i>Build Resume
+                    </a>
+                    <a href="{{ url_for('analyzer') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-search me-2"></i>Analyze Resume
+                    </a>
+                    <a href="{{ url_for('bulk_analyzer') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-layer-group me-2"></i>Bulk Analysis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-5">🌟 Key Features</h2>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 feature-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-edit fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">📝 Resume Builder</h5>
+                    <p class="card-text">Interactive form with step-by-step guidance and ATS-optimized templates</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 feature-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-search fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">🔍 AI Analyzer</h5>
+                    <p class="card-text">Advanced LLM analysis with ATS compatibility checks and scoring</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 feature-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-graduation-cap fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">📚 Course Recommendations</h5>
+                    <p class="card-text">Personalized learning suggestions from top platforms</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 feature-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-layer-group fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">📦 Bulk Analysis</h5>
+                    <p class="card-text">HR-friendly batch processing for multiple resumes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Architecture -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">🏗️ Technical Architecture</h2>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Frontend & Processing</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Flask web framework</li>
+                        <li><i class="fas fa-check text-success me-2"></i>PyPDF2 & python-docx parsing</li>
+                        <li><i class="fas fa-check text-success me-2"></i>ReportLab PDF generation</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Bootstrap responsive UI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">AI & Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Groq API integration</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Llama 3.3 70B Versatile model</li>
+                        <li><i class="fas fa-check text-success me-2"></i>TextBlob NLP processing</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Chart.js visualizations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scoring System -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">🎖️ Scoring System</h2>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h5 class="text-success">85-100</h5>
+                    <p class="mb-0">Excellent<br><small>ATS optimized</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h5 class="text-primary">70-84</h5>
+                    <p class="mb-0">Good<br><small>Minor improvements</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h5 class="text-warning">55-69</h5>
+                    <p class="mb-0">Average<br><small>Several areas need attention</small></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <h5 class="text-danger">Below 55</h5>
+                    <p class="mb-0">Needs improvement<br><small>Major optimization required</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy & Security -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">🔒 Privacy & Security</h3>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                            <h6>No Data Storage</h6>
+                            <p class="small">Files processed in memory only</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-laptop fa-2x text-primary mb-2"></i>
+                            <h6>Local Processing</h6>
+                            <p class="small">Analysis happens on your device</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-lock fa-2x text-warning mb-2"></i>
+                            <h6>Secure</h6>
+                            <p class="small">No resume data saved or transmitted</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.feature-card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+</style>
+{% endblock %}

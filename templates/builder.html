@@ -1,0 +1,791 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Builder - Smart ATS Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-5 text-gradient">
+                    <i class="fas fa-edit me-3"></i>
+                    Interactive Resume Builder
+                </h1>
+                <p class="lead">Create ATS-optimized resumes with step-by-step guidance</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Form Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-custom">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        Resume Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="resumeForm" class="needs-validation" novalidate>
+                        <!-- Personal Information -->
+                        <div class="section-header mb-3">
+                            <h6 class="text-primary">Personal Information</h6>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fullName" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="fullName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone *</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" placeholder="City, State">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                                <input type="url" class="form-control" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="website" class="form-label">Website/Portfolio</label>
+                                <input type="url" class="form-control" id="website" placeholder="https://yourwebsite.com">
+                            </div>
+                        </div>
+
+                        <!-- Professional Summary -->
+                        <div class="section-header mb-3">
+                            <h6 class="text-primary">Professional Summary</h6>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="summary" class="form-label">Professional Summary *</label>
+                            <textarea class="form-control" id="summary" rows="4" required 
+                                      placeholder="Write a compelling 2-3 sentence summary highlighting your key qualifications..."></textarea>
+                            <div class="form-text">
+                                <span id="summaryCount">0</span>/300 characters recommended
+                            </div>
+                        </div>
+
+                        <!-- Experience Section -->
+                        <div class="section-header mb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary mb-0">Work Experience</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addExperience()">
+                                <i class="fas fa-plus me-1"></i>Add Experience
+                            </button>
+                        </div>
+                        
+                        <div id="experienceContainer">
+                            <!-- Experience items will be added here -->
+                        </div>
+
+                        <!-- Education Section -->
+                        <div class="section-header mb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary mb-0">Education</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addEducation()">
+                                <i class="fas fa-plus me-1"></i>Add Education
+                            </button>
+                        </div>
+                        
+                        <div id="educationContainer">
+                            <!-- Education items will be added here -->
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div class="section-header mb-3">
+                            <h6 class="text-primary">Skills</h6>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="technicalSkills" class="form-label">Technical Skills</label>
+                                <textarea class="form-control" id="technicalSkills" rows="3" 
+                                          placeholder="Python, JavaScript, React, SQL, AWS..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="softSkills" class="form-label">Soft Skills</label>
+                                <textarea class="form-control" id="softSkills" rows="3" 
+                                          placeholder="Leadership, Communication, Problem-solving..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Projects Section -->
+                        <div class="section-header mb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary mb-0">Projects (Optional)</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addProject()">
+                                <i class="fas fa-plus me-1"></i>Add Project
+                            </button>
+                        </div>
+                        
+                        <div id="projectsContainer">
+                            <!-- Project items will be added here -->
+                        </div>
+
+                        <!-- Certifications Section -->
+                        <div class="section-header mb-3 d-flex justify-content-between align-items-center">
+                            <h6 class="text-primary mb-0">Certifications (Optional)</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addCertification()">
+                                <i class="fas fa-plus me-1"></i>Add Certification
+                            </button>
+                        </div>
+                        
+                        <div id="certificationsContainer">
+                            <!-- Certification items will be added here -->
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="button" class="btn btn-success flex-fill" onclick="generateResume()">
+                                <i class="fas fa-file-pdf me-2"></i>Generate PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-primary flex-fill" onclick="previewResume()">
+                                <i class="fas fa-eye me-2"></i>Preview
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="saveProgress()">
+                                <i class="fas fa-save me-2"></i>Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="col-lg-6">
+            <div class="card shadow-custom sticky-top" style="top: 20px;">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-eye me-2"></i>
+                        Live Preview
+                    </h5>
+                </div>
+                <div class="card-body" id="resumePreview" style="max-height: 80vh; overflow-y: auto;">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-file-alt fa-4x mb-3"></i>
+                        <p>Start filling out the form to see your resume preview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template Selection Modal -->
+<div class="modal fade" id="templateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choose Resume Template</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card template-card" data-template="modern">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file-alt fa-3x text-primary mb-2"></i>
+                                <h6>Modern</h6>
+                                <p class="small text-muted">Clean and professional</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card template-card" data-template="classic">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file-alt fa-3x text-success mb-2"></i>
+                                <h6>Classic</h6>
+                                <p class="small text-muted">Traditional format</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card template-card" data-template="creative">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file-alt fa-3x text-warning mb-2"></i>
+                                <h6>Creative</h6>
+                                <p class="small text-muted">Stand out design</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="selectTemplate()">Select Template</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Resume Builder JavaScript
+let experienceCount = 0;
+let educationCount = 0;
+let projectCount = 0;
+let certificationCount = 0;
+let selectedTemplate = 'modern';
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add initial experience and education
+    addExperience();
+    addEducation();
+    
+    // Character counter for summary
+    const summaryField = document.getElementById('summary');
+    const summaryCount = document.getElementById('summaryCount');
+    
+    summaryField.addEventListener('input', function() {
+        summaryCount.textContent = this.value.length;
+        if (this.value.length > 300) {
+            summaryCount.classList.add('text-danger');
+        } else {
+            summaryCount.classList.remove('text-danger');
+        }
+    });
+    
+    // Real-time preview updates
+    const formInputs = document.querySelectorAll('#resumeForm input, #resumeForm textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+});
+
+function addExperience() {
+    experienceCount++;
+    const container = document.getElementById('experienceContainer');
+    const experienceHTML = `
+        <div class="experience-item border rounded p-3 mb-3" id="experience-${experienceCount}">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Experience ${experienceCount}</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExperience(${experienceCount})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Job Title *</label>
+                    <input type="text" class="form-control" name="exp_title_${experienceCount}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Company *</label>
+                    <input type="text" class="form-control" name="exp_company_${experienceCount}" required>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Duration *</label>
+                    <input type="text" class="form-control" name="exp_duration_${experienceCount}" placeholder="Jan 2020 - Present" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" name="exp_location_${experienceCount}" placeholder="City, State">
+                </div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Key Responsibilities & Achievements</label>
+                <textarea class="form-control" name="exp_responsibilities_${experienceCount}" rows="3" 
+                          placeholder="• Managed team of 5 developers&#10;• Increased efficiency by 30%&#10;• Led implementation of new system"></textarea>
+                <div class="form-text">Use bullet points and quantify achievements when possible</div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', experienceHTML);
+    
+    // Add event listeners to new inputs
+    const newInputs = container.querySelectorAll(`#experience-${experienceCount} input, #experience-${experienceCount} textarea`);
+    newInputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+}
+
+function removeExperience(id) {
+    document.getElementById(`experience-${id}`).remove();
+    updatePreview();
+}
+
+function addEducation() {
+    educationCount++;
+    const container = document.getElementById('educationContainer');
+    const educationHTML = `
+        <div class="education-item border rounded p-3 mb-3" id="education-${educationCount}">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Education ${educationCount}</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEducation(${educationCount})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Degree *</label>
+                    <input type="text" class="form-control" name="edu_degree_${educationCount}" placeholder="Bachelor of Science in Computer Science" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Institution *</label>
+                    <input type="text" class="form-control" name="edu_institution_${educationCount}" required>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Year</label>
+                    <input type="text" class="form-control" name="edu_year_${educationCount}" placeholder="2020">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">GPA (Optional)</label>
+                    <input type="text" class="form-control" name="edu_gpa_${educationCount}" placeholder="3.8/4.0">
+                </div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', educationHTML);
+    
+    // Add event listeners
+    const newInputs = container.querySelectorAll(`#education-${educationCount} input`);
+    newInputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+}
+
+function removeEducation(id) {
+    document.getElementById(`education-${id}`).remove();
+    updatePreview();
+}
+
+function addProject() {
+    projectCount++;
+    const container = document.getElementById('projectsContainer');
+    const projectHTML = `
+        <div class="project-item border rounded p-3 mb-3" id="project-${projectCount}">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Project ${projectCount}</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeProject(${projectCount})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-8">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-control" name="proj_name_${projectCount}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Year</label>
+                    <input type="text" class="form-control" name="proj_year_${projectCount}" placeholder="2023">
+                </div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="proj_description_${projectCount}" rows="2" 
+                          placeholder="Brief description of the project and your role"></textarea>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Technologies Used</label>
+                <input type="text" class="form-control" name="proj_technologies_${projectCount}" 
+                       placeholder="React, Node.js, MongoDB, AWS">
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', projectHTML);
+    
+    // Add event listeners
+    const newInputs = container.querySelectorAll(`#project-${projectCount} input, #project-${projectCount} textarea`);
+    newInputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+}
+
+function removeProject(id) {
+    document.getElementById(`project-${id}`).remove();
+    updatePreview();
+}
+
+function addCertification() {
+    certificationCount++;
+    const container = document.getElementById('certificationsContainer');
+    const certificationHTML = `
+        <div class="certification-item border rounded p-3 mb-3" id="certification-${certificationCount}">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Certification ${certificationCount}</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCertification(${certificationCount})">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Certification Name</label>
+                    <input type="text" class="form-control" name="cert_name_${certificationCount}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Issuing Organization</label>
+                    <input type="text" class="form-control" name="cert_issuer_${certificationCount}">
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Year Obtained</label>
+                    <input type="text" class="form-control" name="cert_year_${certificationCount}" placeholder="2023">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Expiry Date (if applicable)</label>
+                    <input type="text" class="form-control" name="cert_expiry_${certificationCount}" placeholder="2026">
+                </div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', certificationHTML);
+    
+    // Add event listeners
+    const newInputs = container.querySelectorAll(`#certification-${certificationCount} input`);
+    newInputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+}
+
+function removeCertification(id) {
+    document.getElementById(`certification-${id}`).remove();
+    updatePreview();
+}
+
+function updatePreview() {
+    const previewDiv = document.getElementById('resumePreview');
+    const formData = collectFormData();
+    
+    if (!formData.personal_info.name) {
+        previewDiv.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-file-alt fa-4x mb-3"></i>
+                <p>Start filling out the form to see your resume preview</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const previewHTML = generatePreviewHTML(formData);
+    previewDiv.innerHTML = previewHTML;
+}
+
+function collectFormData() {
+    const formData = {
+        personal_info: {
+            name: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            location: document.getElementById('location').value,
+            linkedin: document.getElementById('linkedin').value,
+            website: document.getElementById('website').value
+        },
+        summary: document.getElementById('summary').value,
+        experience: [],
+        education: [],
+        skills: {
+            technical: document.getElementById('technicalSkills').value.split(',').map(s => s.trim()).filter(s => s),
+            soft: document.getElementById('softSkills').value.split(',').map(s => s.trim()).filter(s => s)
+        },
+        projects: [],
+        certifications: []
+    };
+    
+    // Collect experience data
+    for (let i = 1; i <= experienceCount; i++) {
+        const titleInput = document.querySelector(`input[name="exp_title_${i}"]`);
+        if (titleInput && titleInput.value) {
+            formData.experience.push({
+                title: titleInput.value,
+                company: document.querySelector(`input[name="exp_company_${i}"]`).value,
+                duration: document.querySelector(`input[name="exp_duration_${i}"]`).value,
+                location: document.querySelector(`input[name="exp_location_${i}"]`).value,
+                responsibilities: document.querySelector(`textarea[name="exp_responsibilities_${i}"]`).value.split('\n').filter(r => r.trim())
+            });
+        }
+    }
+    
+    // Collect education data
+    for (let i = 1; i <= educationCount; i++) {
+        const degreeInput = document.querySelector(`input[name="edu_degree_${i}"]`);
+        if (degreeInput && degreeInput.value) {
+            formData.education.push({
+                degree: degreeInput.value,
+                institution: document.querySelector(`input[name="edu_institution_${i}"]`).value,
+                year: document.querySelector(`input[name="edu_year_${i}"]`).value,
+                gpa: document.querySelector(`input[name="edu_gpa_${i}"]`).value
+            });
+        }
+    }
+    
+    // Collect projects data
+    for (let i = 1; i <= projectCount; i++) {
+        const nameInput = document.querySelector(`input[name="proj_name_${i}"]`);
+        if (nameInput && nameInput.value) {
+            formData.projects.push({
+                name: nameInput.value,
+                year: document.querySelector(`input[name="proj_year_${i}"]`).value,
+                description: document.querySelector(`textarea[name="proj_description_${i}"]`).value,
+                technologies: document.querySelector(`input[name="proj_technologies_${i}"]`).value.split(',').map(t => t.trim()).filter(t => t)
+            });
+        }
+    }
+    
+    // Collect certifications data
+    for (let i = 1; i <= certificationCount; i++) {
+        const nameInput = document.querySelector(`input[name="cert_name_${i}"]`);
+        if (nameInput && nameInput.value) {
+            formData.certifications.push({
+                name: nameInput.value,
+                issuer: document.querySelector(`input[name="cert_issuer_${i}"]`).value,
+                year: document.querySelector(`input[name="cert_year_${i}"]`).value,
+                expiry: document.querySelector(`input[name="cert_expiry_${i}"]`).value
+            });
+        }
+    }
+    
+    return formData;
+}
+
+function generatePreviewHTML(data) {
+    let html = `
+        <div class="resume-preview">
+            <!-- Header -->
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <h2 class="mb-1">${data.personal_info.name}</h2>
+                <div class="text-muted">
+                    ${data.personal_info.email}
+                    ${data.personal_info.phone ? ' | ' + data.personal_info.phone : ''}
+                    ${data.personal_info.location ? ' | ' + data.personal_info.location : ''}
+                </div>
+                ${data.personal_info.linkedin || data.personal_info.website ? 
+                    `<div class="text-muted small">
+                        ${data.personal_info.linkedin ? data.personal_info.linkedin : ''}
+                        ${data.personal_info.linkedin && data.personal_info.website ? ' | ' : ''}
+                        ${data.personal_info.website ? data.personal_info.website : ''}
+                    </div>` : ''
+                }
+            </div>
+    `;
+    
+    // Professional Summary
+    if (data.summary) {
+        html += `
+            <div class="mb-4">
+                <h5 class="text-primary border-bottom pb-1">Professional Summary</h5>
+                <p>${data.summary}</p>
+            </div>
+        `;
+    }
+    
+    // Experience
+    if (data.experience.length > 0) {
+        html += `<div class="mb-4">
+            <h5 class="text-primary border-bottom pb-1">Professional Experience</h5>`;
+        
+        data.experience.forEach(exp => {
+            html += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0">${exp.title}</h6>
+                            <div class="text-muted">${exp.company}</div>
+                        </div>
+                        <div class="text-end text-muted small">
+                            <div>${exp.duration}</div>
+                            ${exp.location ? `<div>${exp.location}</div>` : ''}
+                        </div>
+                    </div>
+                    ${exp.responsibilities.length > 0 ? 
+                        `<ul class="mt-2 mb-0">
+                            ${exp.responsibilities.map(resp => `<li>${resp}</li>`).join('')}
+                        </ul>` : ''
+                    }
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+    }
+    
+    // Education
+    if (data.education.length > 0) {
+        html += `<div class="mb-4">
+            <h5 class="text-primary border-bottom pb-1">Education</h5>`;
+        
+        data.education.forEach(edu => {
+            html += `
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0">${edu.degree}</h6>
+                            <div class="text-muted">${edu.institution}</div>
+                        </div>
+                        <div class="text-end text-muted small">
+                            ${edu.year ? `<div>${edu.year}</div>` : ''}
+                            ${edu.gpa ? `<div>GPA: ${edu.gpa}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+    }
+    
+    // Skills
+    if (data.skills.technical.length > 0 || data.skills.soft.length > 0) {
+        html += `<div class="mb-4">
+            <h5 class="text-primary border-bottom pb-1">Skills</h5>`;
+        
+        if (data.skills.technical.length > 0) {
+            html += `<div class="mb-2">
+                <strong>Technical Skills:</strong> ${data.skills.technical.join(', ')}
+            </div>`;
+        }
+        
+        if (data.skills.soft.length > 0) {
+            html += `<div class="mb-2">
+                <strong>Soft Skills:</strong> ${data.skills.soft.join(', ')}
+            </div>`;
+        }
+        
+        html += '</div>';
+    }
+    
+    // Projects
+    if (data.projects.length > 0) {
+        html += `<div class="mb-4">
+            <h5 class="text-primary border-bottom pb-1">Projects</h5>`;
+        
+        data.projects.forEach(proj => {
+            html += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="mb-0">${proj.name}</h6>
+                        ${proj.year ? `<span class="text-muted small">${proj.year}</span>` : ''}
+                    </div>
+                    ${proj.description ? `<p class="mb-1">${proj.description}</p>` : ''}
+                    ${proj.technologies.length > 0 ? 
+                        `<div class="text-muted small">
+                            <strong>Technologies:</strong> ${proj.technologies.join(', ')}
+                        </div>` : ''
+                    }
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+    }
+    
+    // Certifications
+    if (data.certifications.length > 0) {
+        html += `<div class="mb-4">
+            <h5 class="text-primary border-bottom pb-1">Certifications</h5>`;
+        
+        data.certifications.forEach(cert => {
+            html += `
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0">${cert.name}</h6>
+                            ${cert.issuer ? `<div class="text-muted">${cert.issuer}</div>` : ''}
+                        </div>
+                        <div class="text-end text-muted small">
+                            ${cert.year ? `<div>${cert.year}</div>` : ''}
+                            ${cert.expiry ? `<div>Expires: ${cert.expiry}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+async function generateResume() {
+    const formData = collectFormData();
+    
+    if (!formData.personal_info.name || !formData.personal_info.email) {
+        alert('Please fill in at least your name and email address.');
+        return;
+    }
+    
+    const generateBtn = document.querySelector('button[onclick="generateResume()"]');
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<span class="loading-spinner me-2"></span>Generating PDF...';
+    
+    try {
+        const response = await fetch('/api/build-resume', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${formData.personal_info.name.replace(/\s+/g, '_')}_Resume.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            throw new Error('Failed to generate PDF');
+        }
+    } catch (error) {
+        alert('Error generating PDF: ' + error.message);
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-file-pdf me-2"></i>Generate PDF';
+    }
+}
+
+function previewResume() {
+    updatePreview();
+    document.getElementById('resumePreview').scrollIntoView({ behavior: 'smooth' });
+}
+
+function saveProgress() {
+    const formData = collectFormData();
+    localStorage.setItem('resumeProgress', JSON.stringify(formData));
+    
+    // Show success message
+    const saveBtn = document.querySelector('button[onclick="saveProgress()"]');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<i class="fas fa-check me-2"></i>Saved!';
+    saveBtn.classList.add('btn-success');
+    saveBtn.classList.remove('btn-outline-secondary');
+    
+    setTimeout(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.classList.remove('btn-success');
+        saveBtn.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+
+// Load saved progress on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedProgress = localStorage.getItem('resumeProgress');
+    if (savedProgress) {
+        // Load saved data (implementation would go here)
+        console.log('Saved progress found:', JSON.parse(savedProgress));
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Analyzer - Smart ATS Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-5 text-gradient">
+                    <i class="fas fa-search me-3"></i>
+                    AI-Powered Resume Analyzer
+                </h1>
+                <p class="lead">Upload your resume and get detailed ATS compatibility analysis powered by Groq's Llama 3.3 70B</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Upload Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-custom">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-upload me-2"></i>
+                        Upload Resume
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="analyzeForm" class="needs-validation" novalidate>
+                        <!-- File Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">Resume File</label>
+                            <div class="file-upload-container">
+                                <div class="file-upload-area">
+                                    <input type="file" name="file" accept=".pdf,.docx,.doc,.txt" required class="d-none">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <p class="upload-text mb-0">Click to upload or drag & drop</p>
+                                    <small class="text-muted">Supports PDF, DOCX, DOC, TXT (Max 16MB)</small>
+                                </div>
+                                <div class="file-list mt-3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Job Description (Optional) -->
+                        <div class="mb-4">
+                            <label for="job_description" class="form-label">
+                                Job Description (Optional)
+                                <i class="fas fa-info-circle text-muted" data-bs-toggle="tooltip" 
+                                   title="Paste the job description to get targeted analysis"></i>
+                            </label>
+                            <textarea class="form-control" id="job_description" name="job_description" 
+                                      rows="6" placeholder="Paste the job description here for more targeted analysis..."></textarea>
+                        </div>
+
+                        <!-- Analysis Options -->
+                        <div class="mb-4">
+                            <label class="form-label">Analysis Focus</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ats_focus" checked>
+                                <label class="form-check-label" for="ats_focus">
+                                    ATS Compatibility
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="content_focus" checked>
+                                <label class="form-check-label" for="content_focus">
+                                    Content Quality
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="skills_focus" checked>
+                                <label class="form-check-label" for="skills_focus">
+                                    Skills Analysis
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="courses_focus" checked>
+                                <label class="form-check-label" for="courses_focus">
+                                    Course Recommendations
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="button" id="analyzeBtn" class="btn btn-primary w-100" onclick="analyzeResume()">
+                            <i class="fas fa-search me-2"></i>
+                            Analyze Resume
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Tips for Best Results
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Use standard file formats (PDF, DOCX)
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Include relevant industry keywords
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Quantify your achievements
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Avoid complex formatting
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Provide job description for targeted analysis
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="col-lg-8">
+            <div id="analysisResults">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-chart-line fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted">Upload a resume to get started</h4>
+                        <p class="text-muted">Your detailed analysis will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analysis Details Modal -->
+<div class="modal fade" id="analysisModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detailed Analysis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalAnalysisContent">
+                <!-- Detailed analysis content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="exportAnalysis()">
+                    <i class="fas fa-download me-2"></i>Export Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Page-specific JavaScript for analyzer
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize file upload validation
+    const fileInput = document.querySelector('input[type="file"]');
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            // Validate file size
+            if (file.size > 16 * 1024 * 1024) {
+                alert('File size must be less than 16MB');
+                this.value = '';
+                return;
+            }
+            
+            // Validate file type
+            const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword', 'text/plain'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please upload a PDF, DOCX, DOC, or TXT file');
+                this.value = '';
+                return;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

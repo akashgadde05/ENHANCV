@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Resume Analyzer - Smart ATS Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-5 text-gradient">
+                    <i class="fas fa-layer-group me-3"></i>
+                    Bulk Resume Analyzer
+                </h1>
+                <p class="lead">Upload multiple resumes for batch analysis - Perfect for HR teams and recruiters</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Upload Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-custom">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-upload me-2"></i>
+                        Upload Multiple Resumes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="bulkAnalyzeForm" class="needs-validation" novalidate>
+                        <!-- Multiple File Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">Resume Files</label>
+                            <div class="file-upload-container">
+                                <div class="file-upload-area">
+                                    <input type="file" name="files" accept=".pdf,.docx,.doc,.txt" multiple required class="d-none">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <p class="upload-text mb-0">Click to upload or drag & drop multiple files</p>
+                                    <small class="text-muted">Supports PDF, DOCX, DOC, TXT (Max 16MB each)</small>
+                                </div>
+                                <div class="file-list mt-3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Settings -->
+                        <div class="mb-4">
+                            <label class="form-label">Analysis Settings</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rank_candidates" checked>
+                                <label class="form-check-label" for="rank_candidates">
+                                    Rank candidates by score
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="detailed_comparison" checked>
+                                <label class="form-check-label" for="detailed_comparison">
+                                    Generate comparison report
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="export_csv">
+                                <label class="form-check-label" for="export_csv">
+                                    Export results as CSV
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Minimum Score Filter -->
+                        <div class="mb-4">
+                            <label for="min_score" class="form-label">
+                                Minimum Score Filter
+                                <span class="badge bg-secondary" id="scoreValue">0</span>
+                            </label>
+                            <input type="range" class="form-range" id="min_score" min="0" max="100" value="0">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">0</small>
+                                <small class="text-muted">100</small>
+                            </div>
+                        </div>
+
+                        <button type="button" id="bulkAnalyzeBtn" class="btn btn-success w-100" onclick="bulkAnalyze()">
+                            <i class="fas fa-layer-group me-2"></i>
+                            Analyze All Resumes
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="card mt-4" id="statsCard" style="display: none;">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Analysis Statistics
+                    </h6>
+                </div>
+                <div class="card-body" id="statsContent">
+                    <!-- Statistics will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="col-lg-8">
+            <div id="bulkResults">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-users fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted">Upload multiple resumes to get started</h4>
+                        <p class="text-muted">Batch analysis results will appear here</p>
+                        
+                        <!-- Sample workflow -->
+                        <div class="row mt-5">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-upload fa-2x text-primary"></i>
+                                    </div>
+                                    <h6 class="mt-2">1. Upload</h6>
+                                    <small class="text-muted">Select multiple resume files</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-cogs fa-2x text-success"></i>
+                                    </div>
+                                    <h6 class="mt-2">2. Analyze</h6>
+                                    <small class="text-muted">AI processes all resumes</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-chart-bar fa-2x text-warning"></i>
+                                    </div>
+                                    <h6 class="mt-2">3. Compare</h6>
+                                    <small class="text-muted">View ranked results</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed View Modal -->
+<div class="modal fade" id="detailedModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Detailed Analysis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Detailed content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="exportSingleAnalysis()">
+                    <i class="fas fa-download me-2"></i>Export This Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comparison Modal -->
+<div class="modal fade" id="comparisonModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Resume Comparison</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="comparisonContent">
+                <!-- Comparison content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="exportComparison()">
+                    <i class="fas fa-download me-2"></i>Export Comparison
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Page-specific JavaScript for bulk analyzer
+document.addEventListener('DOMContentLoaded', function() {
+    // Score range slider
+    const scoreSlider = document.getElementById('min_score');
+    const scoreValue = document.getElementById('scoreValue');
+    
+    scoreSlider.addEventListener('input', function() {
+        scoreValue.textContent = this.value;
+    });
+    
+    // File validation for multiple files
+    const fileInput = document.querySelector('input[type="file"]');
+    fileInput.addEventListener('change', function() {
+        const files = Array.from(this.files);
+        let totalSize = 0;
+        
+        for (let file of files) {
+            // Check individual file size
+            if (file.size > 16 * 1024 * 1024) {
+                alert(`File "${file.name}" is too large. Maximum size is 16MB.`);
+                this.value = '';
+                return;
+            }
+            
+            totalSize += file.size;
+            
+            // Check file type
+            const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword', 'text/plain'];
+            if (!allowedTypes.includes(file.type)) {
+                alert(`File "${file.name}" has an unsupported format. Please use PDF, DOCX, DOC, or TXT.`);
+                this.value = '';
+                return;
+            }
+        }
+        
+        // Check total size (optional limit)
+        if (totalSize > 100 * 1024 * 1024) { // 100MB total limit
+            alert('Total file size is too large. Please select fewer files or smaller files.');
+            this.value = '';
+            return;
+        }
+        
+        console.log(`Selected ${files.length} files, total size: ${formatFileSize(totalSize)}`);
+    });
+});
+
+function showDetailedAnalysis(index) {
+    const result = window.bulkAnalysisResults[index];
+    const modal = new bootstrap.Modal(document.getElementById('detailedModal'));
+    
+    document.getElementById('modalTitle').textContent = `Detailed Analysis - ${result.filename}`;
+    document.getElementById('modalContent').innerHTML = generateDetailedAnalysisHTML(result.analysis);
+    
+    modal.show();
+}
+
+function generateDetailedAnalysisHTML(analysis) {
+    // Generate detailed HTML for individual analysis
+    return `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Overall Score</h6>
+                <div class="progress mb-3">
+                    <div class="progress-bar ${getProgressBarClass(analysis.overall_score)}" 
+                         style="width: ${analysis.overall_score}%">
+                        ${analysis.overall_score}/100
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6>ATS Compatibility</h6>
+                <div class="progress mb-3">
+                    <div class="progress-bar ${getProgressBarClass(analysis.ats_compatibility.score)}" 
+                         style="width: ${analysis.ats_compatibility.score}%">
+                        ${analysis.ats_compatibility.score}/100
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add more detailed analysis sections here -->
+    `;
+}
+
+function showComparison() {
+    if (!window.bulkAnalysisResults || window.bulkAnalysisResults.length < 2) {
+        alert('Need at least 2 resumes to compare');
+        return;
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('comparisonModal'));
+    document.getElementById('comparisonContent').innerHTML = generateComparisonHTML();
+    modal.show();
+}
+
+function generateComparisonHTML() {
+    // Generate comparison table/chart
+    return '<p>Comparison feature coming soon...</p>';
+}
+
+function exportSingleAnalysis() {
+    // Export single analysis from modal
+    console.log('Export single analysis');
+}
+
+function exportComparison() {
+    // Export comparison report
+    console.log('Export comparison');
+}
+</script>
+{% endblock %}

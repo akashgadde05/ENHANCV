@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Smart ATS Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Feature Not Available
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-4">{{ message }}</p>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>How to fix this:</h6>
+                        <ol class="mb-0">
+                            <li>Install missing dependencies: <code>pip install -r requirements.txt</code></li>
+                            <li>Or try the minimal installer: <code>python install.py</code></li>
+                            <li>Make sure your Groq API key is configured in <code>.env</code></li>
+                        </ol>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                        <button class="btn btn-outline-secondary" onclick="checkStatus()">
+                            <i class="fas fa-sync me-2"></i>Check Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Card -->
+            <div class="card mt-4" id="statusCard" style="display: none;">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-heartbeat me-2"></i>
+                        System Status
+                    </h6>
+                </div>
+                <div class="card-body" id="statusContent">
+                    <!-- Status will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function checkStatus() {
+    const statusCard = document.getElementById('statusCard');
+    const statusContent = document.getElementById('statusContent');
+    
+    statusCard.style.display = 'block';
+    statusContent.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm" role="status"></div> Checking...</div>';
+    
+    try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+        
+        let html = '<div class="row">';
+        
+        // LLM Status
+        html += `
+            <div class="col-md-4 mb-2">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-robot me-2 ${data.llm_available ? 'text-success' : 'text-danger'}"></i>
+                    <span>LLM Analysis</span>
+                    <span class="ms-auto badge ${data.llm_available ? 'bg-success' : 'bg-danger'}">
+                        ${data.llm_available ? 'Available' : 'Missing'}
+                    </span>
+                </div>
+            </div>
+        `;
+        
+        // Analyzer Status
+        html += `
+            <div class="col-md-4 mb-2">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-alt me-2 ${data.analyzer_available ? 'text-success' : 'text-danger'}"></i>
+                    <span>File Processing</span>
+                    <span class="ms-auto badge ${data.analyzer_available ? 'bg-success' : 'bg-danger'}">
+                        ${data.analyzer_available ? 'Available' : 'Missing'}
+                    </span>
+                </div>
+            </div>
+        `;
+        
+        // PDF Status
+        html += `
+            <div class="col-md-4 mb-2">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-pdf me-2 ${data.pdf_available ? 'text-success' : 'text-danger'}"></i>
+                    <span>PDF Generation</span>
+                    <span class="ms-auto badge ${data.pdf_available ? 'bg-success' : 'bg-danger'}">
+                        ${data.pdf_available ? 'Available' : 'Missing'}
+                    </span>
+                </div>
+            </div>
+        `;
+        
+        html += '</div>';
+        
+        // Feature availability
+        html += '<hr><h6>Available Features:</h6><ul class="list-unstyled">';
+        
+        if (data.features.resume_analysis) {
+            html += '<li><i class="fas fa-check text-success me-2"></i>Resume Analysis</li>';
+        } else {
+            html += '<li><i class="fas fa-times text-danger me-2"></i>Resume Analysis</li>';
+        }
+        
+        if (data.features.resume_building) {
+            html += '<li><i class="fas fa-check text-success me-2"></i>Resume Building</li>';
+        } else {
+            html += '<li><i class="fas fa-times text-danger me-2"></i>Resume Building</li>';
+        }
+        
+        if (data.features.bulk_analysis) {
+            html += '<li><i class="fas fa-check text-success me-2"></i>Bulk Analysis</li>';
+        } else {
+            html += '<li><i class="fas fa-times text-danger me-2"></i>Bulk Analysis</li>';
+        }
+        
+        html += '</ul>';
+        
+        statusContent.innerHTML = html;
+        
+    } catch (error) {
+        statusContent.innerHTML = `<div class="alert alert-danger">Error checking status: ${error.message}</div>`;
+    }
+}
+</script>
+{% endblock %}
