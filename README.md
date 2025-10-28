@@ -71,8 +71,8 @@ The system evaluates resumes across multiple dimensions:
 #### Option 1: One-Click Start (Easiest)
 ```bash
 # Clone and start automatically
-git clone <repository-url>
-cd smart-ats-resume-builder
+git clone https://github.com/akashgadde05/ENHANCV.git
+cd ENHANCV
 python start.py
 ```
 
@@ -198,7 +198,7 @@ The application will be available at `http://localhost:5000`
 
 ### Project Structure
 ```
-smart-ats-resume-builder/
+ENHANCV/
 ├── app.py                 # Main Flask application
 ├── run.py                 # Application runner
 ├── requirements.txt       # Python dependencies
