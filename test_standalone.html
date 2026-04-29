@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standalone Upload Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Standalone File Upload Test</h1>
+        <p class="text-center text-muted">Open console (F12) to see debug messages</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="file-upload-container">
+                            <div class="file-upload-area" id="singleFileUpload" 
+                                 style="cursor: pointer; padding: 2rem; border: 2px dashed #dee2e6; border-radius: 0.5rem; text-align: center; transition: all 0.3s;">
+                                <input type="file" id="singleFileInput" name="file" accept=".pdf,.docx,.doc,.txt" class="d-none">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                <p class="upload-text mb-0">Click to upload or drag & drop</p>
+                                <small class="text-muted">Supports PDF, DOCX, DOC, TXT (Max 16MB)</small>
+                            </div>
+                            <div class="file-list mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="console-output" class="mt-4 p-3 bg-dark text-light rounded" style="font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto;">
+                    <div>Console Output:</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Custom console logger
+        const consoleOutput = document.getElementById('console-output');
+        function log(message, data = '') {
+            console.log(message, data);
+            const div = document.createElement('div');
+            div.textContent = message + (data ? ' ' + JSON.stringify(data, null, 2) : '');
+            div.style.borderBottom = '1px solid #444';
+            div.style.padding = '5px 0';
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        log('=== SCRIPT LOADED ===');
+        
+        window.addEventListener('load', function() {
+            log('Window loaded');
+            
+            const uploadArea = document.getElementById('singleFileUpload');
+            const fileInput = document.getElementById('singleFileInput');
+            const fileList = document.querySelector('.file-list');
+            
+            log('Upload area:', uploadArea ? 'FOUND' : 'NOT FOUND');
+            log('File input:', fileInput ? 'FOUND' : 'NOT FOUND');
+            
+            if (uploadArea && fileInput) {
+                log('✓ Setting up handlers...');
+                
+                // Click handler
+                uploadArea.onclick = function(e) {
+                    log('>>> CLICK DETECTED! <<<');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fileInput.click();
+                };
+                
+                // File change handler
+                fileInput.onchange = function(e) {
+                    log('>>> FILE SELECTED! <<<');
+                    if (this.files.length > 0) {
+                        const file = this.files[0];
+                        log('File name: ' + file.name);
+                        log('File size: ' + file.size + ' bytes');
+                        log('File type: ' + file.type);
+                        
+                        // Show in UI
+                        fileList.innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)
+                            </div>
+                        `;
+                        
+                        alert('✓ File selected: ' + file.name);
+                    }
+                };
+                
+                // Drag over
+                uploadArea.ondragover = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    log('>>> DRAG OVER <<<');
+                    this.style.borderColor = '#28a745';
+                    this.style.backgroundColor = '#d4edda';
+                    this.style.borderStyle = 'solid';
+                };
+                
+                // Drag leave
+                uploadArea.ondragleave = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    log('>>> DRAG LEAVE <<<');
+                    this.style.borderColor = '#dee2e6';
+                    this.style.backgroundColor = 'transparent';
+                    this.style.borderStyle = 'dashed';
+                };
+                
+                // Drop
+                uploadArea.ondrop = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    log('>>> FILE DROPPED! <<<');
+                    this.style.borderColor = '#dee2e6';
+                    this.style.backgroundColor = 'transparent';
+                    this.style.borderStyle = 'dashed';
+                    
+                    const files = e.dataTransfer.files;
+                    log('Dropped files count: ' + files.length);
+                    
+                    if (files.length > 0) {
+                        const file = files[0];
+                        log('File name: ' + file.name);
+                        log('File size: ' + file.size + ' bytes');
+                        
+                        fileInput.files = files;
+                        
+                        // Show in UI
+                        fileList.innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)
+                            </div>
+                        `;
+                        
+                        alert('✓ File dropped: ' + file.name);
+                    }
+                };
+                
+                // Prevent default on body
+                document.body.ondragover = function(e) { e.preventDefault(); };
+                document.body.ondrop = function(e) { e.preventDefault(); };
+                
+                log('✓ All handlers set up successfully!');
+                log('>>> TRY CLICKING OR DRAGGING A FILE NOW <<<');
+            } else {
+                log('✗ ERROR: Elements not found!');
+            }
+        });
+    </script>
+</body>
+</html>

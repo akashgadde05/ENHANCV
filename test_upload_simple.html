@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Upload Test</title>
+    <style>
+        .upload-area {
+            width: 400px;
+            height: 200px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 50px auto;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Simple File Upload Test</h1>
+    
+    <div class="upload-area" id="uploadArea">
+        <input type="file" id="fileInput" style="display: none;">
+        <p>Click or drag file here</p>
+    </div>
+    
+    <div id="result" style="text-align: center; margin-top: 20px;"></div>
+
+    <script>
+        console.log('Script loaded');
+        
+        window.onload = function() {
+            console.log('Window loaded');
+            
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const result = document.getElementById('result');
+            
+            console.log('Upload area:', uploadArea);
+            console.log('File input:', fileInput);
+            
+            // Click to upload
+            uploadArea.onclick = function(e) {
+                console.log('Click!');
+                fileInput.click();
+            };
+            
+            // File selected
+            fileInput.onchange = function() {
+                console.log('File selected:', this.files);
+                if (this.files.length > 0) {
+                    result.innerHTML = '<strong>Selected:</strong> ' + this.files[0].name;
+                }
+            };
+            
+            // Drag over
+            uploadArea.ondragover = function(e) {
+                e.preventDefault();
+                console.log('Drag over');
+                this.style.borderColor = 'green';
+                this.style.backgroundColor = '#e8f5e9';
+            };
+            
+            // Drag leave
+            uploadArea.ondragleave = function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#ccc';
+                this.style.backgroundColor = 'transparent';
+            };
+            
+            // Drop
+            uploadArea.ondrop = function(e) {
+                e.preventDefault();
+                console.log('Drop!', e.dataTransfer.files);
+                this.style.borderColor = '#ccc';
+                this.style.backgroundColor = 'transparent';
+                
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    result.innerHTML = '<strong>Dropped:</strong> ' + e.dataTransfer.files[0].name;
+                }
+            };
+            
+            console.log('All handlers set up!');
+        };
+    </script>
+</body>
+</html>

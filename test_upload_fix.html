@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .file-upload-modern {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8fafc;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .file-upload-modern:hover {
+            border-color: #667eea;
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+        
+        .file-upload-modern.dragover {
+            border-color: #10b981;
+            background: #f0fdf4;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">File Upload Test</h1>
+        
+        <!-- Single File Upload Test -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-xl font-semibold mb-4">Single File Upload (Analyzer)</h2>
+            <div class="file-upload-container">
+                <div class="file-upload-modern" id="fileUploadArea">
+                    <input type="file" name="file" accept=".pdf,.docx,.doc,.txt" required class="hidden" id="fileInput">
+                    <div class="text-center">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="upload-text text-lg font-medium text-gray-700 mb-2">Click to upload or drag & drop</p>
+                        <p class="text-sm text-gray-500">Supports PDF, DOCX, DOC, TXT (Max 16MB)</p>
+                    </div>
+                </div>
+                <div class="file-list mt-4"></div>
+            </div>
+        </div>
+        
+        <!-- Multiple File Upload Test -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4">Multiple File Upload (Bulk Analyzer)</h2>
+            <div class="file-upload-container">
+                <div class="file-upload-modern" id="bulkFileUploadArea">
+                    <input type="file" name="files" accept=".pdf,.docx,.doc,.txt" multiple required class="hidden" id="bulkFileInput">
+                    <div class="text-center">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="upload-text text-lg font-medium text-gray-700 mb-2">Click to upload or drag & drop multiple files</p>
+                        <p class="text-sm text-gray-500">Supports PDF, DOCX, DOC, TXT (Max 16MB each)</p>
+                    </div>
+                </div>
+                <div class="file-list mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test the file upload functionality
+        function setupFileUploadHandlers() {
+            // Single file upload for analyzer
+            const analyzerUpload = document.getElementById('fileUploadArea');
+            const analyzerInput = document.getElementById('fileInput');
+            
+            if (analyzerUpload && analyzerInput) {
+                console.log('Setting up analyzer file upload...');
+                
+                // Click handler
+                analyzerUpload.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    analyzerInput.click();
+                });
+                
+                // Drag and drop handlers
+                analyzerUpload.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    analyzerUpload.classList.add('dragover');
+                });
+                
+                analyzerUpload.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    analyzerUpload.classList.remove('dragover');
+                });
+                
+                analyzerUpload.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    analyzerUpload.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        analyzerInput.files = files;
+                        handleFileSelection(analyzerInput);
+                    }
+                });
+                
+                // File input change handler
+                analyzerInput.addEventListener('change', function() {
+                    handleFileSelection(analyzerInput);
+                });
+            }
+            
+            // Multiple file upload for bulk analyzer
+            const bulkUpload = document.getElementById('bulkFileUploadArea');
+            const bulkInput = document.getElementById('bulkFileInput');
+            
+            if (bulkUpload && bulkInput) {
+                console.log('Setting up bulk analyzer file upload...');
+                
+                // Click handler
+                bulkUpload.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    bulkInput.click();
+                });
+                
+                // Drag and drop handlers
+                bulkUpload.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    bulkUpload.classList.add('dragover');
+                });
+                
+                bulkUpload.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    bulkUpload.classList.remove('dragover');
+                });
+                
+                bulkUpload.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    bulkUpload.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        bulkInput.files = files;
+                        handleFileSelection(bulkInput);
+                    }
+                });
+                
+                // File input change handler
+                bulkInput.addEventListener('change', function() {
+                    handleFileSelection(bulkInput);
+                });
+            }
+        }
+        
+        function handleFileSelection(input) {
+            const files = Array.from(input.files);
+            console.log(`Files selected: ${files.length}`);
+            
+            // Update file list display
+            const fileList = input.closest('.file-upload-container').querySelector('.file-list');
+            if (fileList) {
+                fileList.innerHTML = '';
+                files.forEach((file, index) => {
+                    const fileItem = createFileItem(file, index, input);
+                    fileList.appendChild(fileItem);
+                });
+            }
+            
+            // Update upload area text
+            const uploadArea = input.closest('.file-upload-container').querySelector('.file-upload-modern');
+            const uploadText = uploadArea.querySelector('.upload-text');
+            if (uploadText) {
+                uploadText.innerHTML = `<span class="text-green-600 font-semibold">${files.length} file(s) selected</span>`;
+            }
+            
+            alert(`${files.length} file(s) selected successfully!`);
+        }
+        
+        function createFileItem(file, index, input) {
+            const div = document.createElement('div');
+            div.className = 'file-item flex justify-between items-center p-3 bg-gray-50 border border-gray-200 rounded-lg mb-2 hover:bg-gray-100 transition-colors';
+            
+            div.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-file-alt text-indigo-600 mr-3"></i>
+                    <div>
+                        <span class="font-medium text-gray-800">${file.name}</span>
+                        <div class="text-sm text-gray-500">${formatFileSize(file.size)}</div>
+                    </div>
+                </div>
+                <button type="button" class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors" onclick="removeFileItem(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            return div;
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function removeFileItem(button) {
+            const fileItem = button.closest('.file-item');
+            const fileList = button.closest('.file-list');
+            
+            if (fileItem) {
+                fileItem.remove();
+                
+                // Update the file count display
+                const remainingFiles = fileList.querySelectorAll('.file-item').length;
+                const uploadArea = fileList.closest('.file-upload-container').querySelector('.file-upload-modern');
+                const uploadText = uploadArea.querySelector('.upload-text');
+                
+                if (remainingFiles === 0) {
+                    uploadText.innerHTML = 'Click to upload or drag & drop';
+                } else {
+                    uploadText.innerHTML = `<span class="text-green-600 font-semibold">${remainingFiles} file(s) selected</span>`;
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileUploadHandlers();
+        });
+    </script>
+</body>
+</html>
