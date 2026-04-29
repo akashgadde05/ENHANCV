@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_file, flash, redirect, url_for
 from werkzeug.utils import secure_filename
+from whitenoise import WhiteNoise
 import os
 import json
 from utils.llm_analyzer import LLMAnalyzer
@@ -10,10 +11,13 @@ import tempfile
 import zipfile
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/', prefix='static')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
